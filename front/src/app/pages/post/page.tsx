@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./post.module.css";
 
@@ -14,6 +14,7 @@ export default function PostPage() {
   const [hintText, setHintText] = useState("上にスワイプしてバブルを送信");
   const [showCheckmark, setShowCheckmark] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [school, setSchool] = useState("東京科学大学"); // プルダウンの選択値
 
   // 送信ボタン押下時、入力内容をバブルプレビューとして表示
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -56,39 +57,29 @@ export default function PostPage() {
     e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
-  // バブル送信処理：バブルを上にアニメーションさせた後、チェックマークとモーダルを表示
-  const submitBubble = async() => {
-
-    // 送信処理
-
-    try{
-      const response = await fetch('/api/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          // text: sendText,
-          // schoolId: sid, 
-        }),
-      });
-
-      if (response.ok) {
-        alert('投稿が成功しました');
-      } else {
-        alert('投稿に失敗しました');
-      }
+  // バブル送信処理：送信時にテキスト（previewBubble）とプルダウンの選択値（school）をPOSTデータに含める
+  const submitBubble = async () => {
+    try {
+      // 実際の送信処理例（API実装に合わせて修正してください）
+      // const response = await fetch('/api/submit', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     text: previewBubble,
+      //     schoolId: school,
+      //   }),
+      // });
+      // if (response.ok) {
+      //   alert('投稿が成功しました');
+      // } else {
+      //   alert('投稿に失敗しました');
+      // }
     } catch (error) {
       console.error('エラー:', error);
       alert('投稿中にエラーが発生しました');
     }
-
-    // 送信処理ここまで
-
-
-
-
-
 
     setBubbleAnimating(true);
     setHintText("送信済み");
@@ -115,6 +106,14 @@ export default function PostPage() {
 
   return (
     <div className={styles.container}>
+      {/* フロート戻るボタン */}
+      <div
+        className={styles.backButton}
+        onClick={() => router.push("./home")}
+      >
+        ←
+      </div>
+
       {/* 背景の流れ星エフェクト */}
       <div className={styles.shootingStars}>
         {Array.from({ length: 10 }).map((_, i) => (
@@ -140,12 +139,14 @@ export default function PostPage() {
       )}
 
       <form className={styles.postEditArea} onSubmit={handleSubmit}>
-
-        <select className={styles.dropdown}>
+        <select
+          className={styles.dropdown}
+          value={school}
+          onChange={(e) => setSchool(e.target.value)}
+        >
           <option value="東京科学大学">東京科学大学</option>
           <option value="九州工業大学">九州工業大学</option>
         </select>
-
         <textarea
           className={styles.textbox}
           placeholder="バブル投稿を入力してください"
@@ -180,7 +181,7 @@ export default function PostPage() {
               <button
                 className={`${styles.modalButton} ${styles.no}`}
                 onClick={() => {
-                  router.push("./home");
+                  router.push("pages/home");
                 }}
               >
                 いいえ

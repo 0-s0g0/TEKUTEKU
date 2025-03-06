@@ -11,10 +11,10 @@ export default function HomePage() {
         <Link href="./post">
           <button className={styles.button}>投稿する</button>
         </Link>
-        <Link href="/reply">
+        <Link href="./index">
           <button className={styles.button}>返信する</button>
         </Link>
-        <Link href="/fullscreen">
+        <Link href="./index">
           <button className={styles.button}>大画面表示</button>
         </Link>
       </div>
