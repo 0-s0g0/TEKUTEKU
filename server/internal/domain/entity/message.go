@@ -1,6 +1,10 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/0-s0g0/TEKUTEKU/server/pkg/null"
+)
 
 type Message struct {
 	ID        string
@@ -11,4 +15,6 @@ type Message struct {
 	FloatTime float32
 	School    int
 	CreatedAt time.Time
+	ParentID  null.Null[string]
+	Reply     []Message
 }
