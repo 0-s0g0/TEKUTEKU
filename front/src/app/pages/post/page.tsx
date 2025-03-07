@@ -61,21 +61,21 @@ export default function PostPage() {
   const submitBubble = async () => {
     try {
       // 実際の送信処理例（API実装に合わせて修正してください）
-      // const response = await fetch('/api/submit', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     text: previewBubble,
-      //     schoolId: school,
-      //   }),
-      // });
-      // if (response.ok) {
-      //   alert('投稿が成功しました');
-      // } else {
-      //   alert('投稿に失敗しました');
-      // }
+      const response = await fetch('/api/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: previewBubble,
+          schoolId: school,
+        }),
+      });
+      if (response.ok) {
+        alert('投稿が成功しました');
+      } else {
+        alert('投稿に失敗しました');
+      }
     } catch (error) {
       console.error('エラー:', error);
       alert('投稿中にエラーが発生しました');
@@ -181,7 +181,7 @@ export default function PostPage() {
               <button
                 className={`${styles.modalButton} ${styles.no}`}
                 onClick={() => {
-                  router.push("pages/home");
+                  router.push("./home");
                 }}
               >
                 いいえ
