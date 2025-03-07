@@ -34,10 +34,11 @@ func (m *MessageService) Create(ctx context.Context, message entity.Message) (*e
 		ID:        uuid.New(),
 		School:    message.School,
 		Message:   message.Message,
-		X:         rand.Intn(5) * 10,
-		Y:         rand.Intn(5) * 10,
+		X:         rand.Intn(15)*25 + 100,
+		Y:         rand.Intn(15)*25 + 100,
 		FloatTime: float32(rand.Intn(10))*0.2 + 5.0,
 		CreatedAt: time.Now(),
+		ParentID:  message.ParentID,
 	}
 	created, err := m.mr.Create(ctx, mess)
 	if err != nil {
@@ -48,7 +49,41 @@ func (m *MessageService) Create(ctx context.Context, message entity.Message) (*e
 
 // GetAll implements IMessageService.
 func (m *MessageService) GetAll(ctx context.Context) ([]entity.Message, error) {
-	return m.mr.GetAll(ctx)
+	messages, err := m.mr.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+	collection := make(map[string][]entity.Message)
+	for _, m := range messages {
+		if !m.ParentID.Valid {
+			continue
+		}
+		if _, ok := collection[m.ParentID.Value]; !ok {
+			collection[m.ParentID.Value] = make([]entity.Message, 0, 10)
+		}
+		collection[m.ParentID.Value] = append(collection[m.ParentID.Value], m)
+	}
+	mess := make([]entity.Message, 0, len(messages))
+	for _, m := range messages {
+		n := entity.Message{
+			ID:        m.ID,
+			School:    m.School,
+			Message:   m.Message,
+			Likes:     m.Likes,
+			X:         m.X,
+			Y:         m.Y,
+			FloatTime: m.FloatTime,
+			CreatedAt: m.CreatedAt,
+			ParentID:  m.ParentID,
+		}
+		for k, v := range collection {
+			if m.ID == k {
+				n.Reply = v
+			}
+		}
+		mess = append(mess, n)
+	}
+	return mess, nil
 }
 
 // GetByID implements IMessageService.

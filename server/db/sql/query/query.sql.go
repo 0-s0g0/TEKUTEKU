@@ -7,15 +7,17 @@ package query
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createMessage = `-- name: CreateMessage :one
 INSERT INTO messages (
-  message_id, school, x, y, message, created_at, float_time
+  message_id, school, x, y, message, created_at, float_time, parent_id
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7
+  $1, $2, $3, $4, $5, $6, $7, $8
 )
-RETURNING message_id, school, x, y, message, created_at, float_time, likes
+RETURNING message_id, school, x, y, message, created_at, float_time, likes, parent_id
 `
 
 type CreateMessageParams struct {
@@ -26,6 +28,7 @@ type CreateMessageParams struct {
 	Message   string
 	CreatedAt string
 	FloatTime float32
+	ParentID  pgtype.Text
 }
 
 func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (Message, error) {
@@ -37,6 +40,7 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (M
 		arg.Message,
 		arg.CreatedAt,
 		arg.FloatTime,
+		arg.ParentID,
 	)
 	var i Message
 	err := row.Scan(
@@ -48,6 +52,7 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (M
 		&i.CreatedAt,
 		&i.FloatTime,
 		&i.Likes,
+		&i.ParentID,
 	)
 	return i, err
 }
@@ -87,7 +92,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getAllMessage = `-- name: GetAllMessage :many
-SELECT message_id, school, x, y, message, created_at, float_time, likes from messages
+SELECT message_id, school, x, y, message, created_at, float_time, likes, parent_id from messages
 `
 
 func (q *Queries) GetAllMessage(ctx context.Context) ([]Message, error) {
@@ -108,6 +113,7 @@ func (q *Queries) GetAllMessage(ctx context.Context) ([]Message, error) {
 			&i.CreatedAt,
 			&i.FloatTime,
 			&i.Likes,
+			&i.ParentID,
 		); err != nil {
 			return nil, err
 		}

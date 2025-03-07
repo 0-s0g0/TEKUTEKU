@@ -36,8 +36,8 @@ WHERE message_id = $1;
 
 -- name: CreateMessage :one
 INSERT INTO messages (
-  message_id, school, x, y, message, created_at, float_time
+  message_id, school, x, y, message, created_at, float_time, parent_id
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7
+  $1, $2, $3, $4, $5, $6, $7, $8
 )
 RETURNING *;

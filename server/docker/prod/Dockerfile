@@ -70,7 +70,7 @@ COPY .env .env
 COPY key.json key.json
 RUN curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.13.0/cloud-sql-proxy.linux.amd64
 RUN chmod +x cloud-sql-proxy
-RUN ./cloud-sql-proxy yanbaru-eisa:asia-northeast1:yanbaru-eisa-eisa-db-prod=tcp:0.0.0.0:5432 --json-credentials=key.json &
+RUN ./cloud-sql-proxy tekuteku-20250306:asia-northeast1:tekuteku-sql-instance -credential_file=key.json &
 
 # Expose the port that the application listens on.
 EXPOSE 8080

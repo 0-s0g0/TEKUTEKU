@@ -24,7 +24,7 @@ func New() *query.Queries {
 
 func Init() (*pgx.Conn, error) {
 	if env.Mode == "dev" {
-		conn, err := pgx.Connect(context.Background(), "postgres://hackz:password@db:5432/tekuteku?sslmode=disable")
+		conn, err := pgx.Connect(context.Background(), "postgres://hackz:password@tcp(localhost:5432)/tekuteku?sslmode=disable")
 		if err != nil {
 			return nil, err
 		}
@@ -52,7 +52,7 @@ func Init() (*pgx.Conn, error) {
 		// if usePrivate != "" {
 		// 	opts = append(opts, cloudsqlconn.WithDefaultDialOptions(cloudsqlconn.WithPrivateIP()))
 		// }
-		opts = append(opts, cloudsqlconn.WithCredentialsFile("./key.json"))
+		// opts = append(opts, cloudsqlconn.WithCredentialsFile("./key.json"))
 		d, err := cloudsqlconn.NewDialer(context.Background(), opts...)
 		if err != nil {
 			return nil, err

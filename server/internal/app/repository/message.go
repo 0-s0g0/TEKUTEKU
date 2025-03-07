@@ -5,7 +5,9 @@ import (
 	"time"
 
 	"github.com/0-s0g0/TEKUTEKU/server/pkg/errors"
+	"github.com/0-s0g0/TEKUTEKU/server/pkg/null"
 	timeformat "github.com/0-s0g0/TEKUTEKU/server/pkg/time_format"
+	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/0-s0g0/TEKUTEKU/server/db/sql/query"
 	"github.com/0-s0g0/TEKUTEKU/server/internal/domain/entity"
@@ -30,6 +32,7 @@ func (m *MessageRepository) Create(ctx context.Context, message entity.Message) 
 		Y:         int32(message.Y),
 		FloatTime: message.FloatTime,
 		CreatedAt: timeformat.Format(message.CreatedAt),
+		ParentID:  pgtype.Text{String: message.ParentID.Value, Valid: message.ParentID.Valid},
 	})
 	if err != nil {
 		return nil, errors.HandleDBError(err)
@@ -64,6 +67,7 @@ func (m *MessageRepository) GetAll(ctx context.Context) ([]entity.Message, error
 			Y:         int(m.Y),
 			FloatTime: m.FloatTime,
 			CreatedAt: timeformat.Parse(m.CreatedAt),
+			ParentID:  null.Null[string]{Value: m.ParentID.String, Valid: m.ParentID.Valid},
 		})
 	}
 	return a, nil

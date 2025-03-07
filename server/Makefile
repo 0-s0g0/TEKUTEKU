@@ -14,7 +14,7 @@ DB_USER := $(DB_USER)
 IMAGE_SHA := $(shell git rev-parse HEAD)
 IMAGE_NAME := $(REGION)-docker.pkg.dev/$(PROJECT_ID)/$(REPOSITORY_ID)/$(SERVICE)
 
-.PHONY: run cloud-sql-proxy
+.PHONY: run cloud-sql-proxy docker-build     
 
 
 gen-migrate:
@@ -39,11 +39,11 @@ gcloud-auth:
 
 # Build and push Docker images
 docker-build:
-	docker build -t $(IMAGE_NAME):$(IMAGE_SHA) -t $(IMAGE_NAME):latest --platform=linux/amd64 -f ./docker/prod/Dockerfile ./
+	docker build -t $(IMAGE_NAME):$(IMAGE_SHA) --platform=linux/amd64 -f ./docker/prod/Dockerfile .
 
 docker-push:
 	docker push $(IMAGE_NAME):$(IMAGE_SHA)
-	docker push $(IMAGE_NAME):latest
+	# docker push $(IMAGE_NAME):latest
 
 # Deploy to Cloud Run
 deploy-cloudrun:
@@ -57,6 +57,15 @@ deploy: docker-build docker-push deploy-cloudrun
 
 db-doc:
 	go tool tbls doc    
+	
+setup-proxy:
+	curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.1.2/cloud-sql-proxy.darwin.amd64
+	chmod 744 cloud-sql-proxy
+	gcloud components install cloud_sql_proxy --quiet
+	rm cloud-sql-proxy
 
+
+cloud-sql-proxy:
+	./cloud-sql-proxy tekuteku-20250306:asia-northeast1:tekuteku-sql-instance
 
 

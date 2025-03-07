@@ -14,6 +14,7 @@ import (
 	env "github.com/0-s0g0/TEKUTEKU/server/pkg/config"
 	"github.com/0-s0g0/TEKUTEKU/server/pkg/handler"
 	"github.com/0-s0g0/TEKUTEKU/server/pkg/middleware"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -35,9 +36,12 @@ func main() {
 	mux.Handle("GET /messages", handler.AppHandler(h.MessageHandler.GET()))
 	mux.Handle("POST /messages", handler.AppHandler(h.MessageHandler.POST()))
 
+	mux.Handle("POST /reply", handler.AppHandler(h.MessageHandler.ReplyPOST()))
+
 	mux.Handle("POST /likes", handler.AppHandler(h.LikeHandler.POST()))
 
-	handler := middleware.Chain(mux, middleware.Context, middleware.Logger, middleware.Recover)
+	c := cors.AllowAll()
+	handler := middleware.Chain(mux, c.Handler, middleware.Context, middleware.Logger, middleware.Recover)
 
 	server := &http.Server{
 		Addr:    ":8080",

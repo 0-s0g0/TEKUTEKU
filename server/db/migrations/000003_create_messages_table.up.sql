@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS  messages(
     message text NOT NULL,
     created_at text NOT NULL,
     float_time real NOT NULL,
-    likes int NOT NULL DEFAULT 0
+    likes int NOT NULL DEFAULT 0,
+    parent_id text
 );
